@@ -10,6 +10,7 @@ import UIKit
 class KeyboardViewController: UIInputViewController {
 
     @IBOutlet var nextKeyboardButton: UIButton!
+    @IBOutlet var keyboardButton: UIButton!
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
@@ -37,6 +38,29 @@ class KeyboardViewController: UIInputViewController {
         self.nextKeyboardButton.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
         self.nextKeyboardButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
     }
+    
+    @IBAction func keyboardButtonPressed(button:UIButton){
+        let str = button.titleLabel?.text
+        (textDocumentProxy as UIKeyInput).insertText("\(str!)")
+    }
+    
+    @IBAction func keyboardButtonTapped(_ sender: UIButton) {
+        let duration: TimeInterval = 0.1
+                
+                // Define the distance to move the key up (in points)
+                let moveDistance: CGFloat = -10.0 // Adjust this value to control the upward movement
+                
+                // Animate the key
+                UIView.animate(withDuration: duration, animations: {
+                    // Move the key up
+                    self.keyboardButton.frame.origin.y += moveDistance
+                }) { _ in
+                    // Move the key back to its original position
+                    UIView.animate(withDuration: duration) {
+                        self.keyboardButton.frame.origin.y -= moveDistance
+                    }
+                }
+        }
     
     override func viewWillLayoutSubviews() {
         self.nextKeyboardButton.isHidden = !self.needsInputModeSwitchKey
