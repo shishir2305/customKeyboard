@@ -179,7 +179,7 @@ extension KeyboardViewController {
             keyboardStackView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 5),
             keyboardStackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -5),
             keyboardStackView.bottomAnchor.constraint(equalTo: nextKeyboardButton.topAnchor, constant: 20),
-            keyboardStackView.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor, constant: 5)
+            keyboardStackView.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor, constant: 50)
         ])
 
         // Define the layout of the keyboard
@@ -316,6 +316,7 @@ extension KeyboardViewController {
                 leftArrowButton.tintColor = .darkGray
                 leftArrowButton.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
                 leftArrowButton.setImage(UIImage(systemName: "arrowtriangle.left.fill"), for: .normal)
+                leftArrowButton.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(leftArrowButton)
                 
                 
@@ -324,6 +325,7 @@ extension KeyboardViewController {
                 button.setTitle(key, for: .normal)
                 button.setTitleColor(.black, for: .normal)
                 button.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+                button.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(button)
             }
         }
@@ -331,4 +333,103 @@ extension KeyboardViewController {
         return rowStackView
     }
     
+}
+
+extension KeyboardViewController {
+//    @objc private func showPopup(sender: UIButton) {
+//        // Create a UILabel with the same size as the button
+//        let label = UILabel(frame: sender.frame)
+//        label.text = sender.currentTitle
+//        label.textAlignment = .center
+//        label.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+//        label.textColor = .white
+//        label.layer.cornerRadius = 10
+//        label.clipsToBounds = true
+//        label.alpha = 0
+//        
+//        // Position the label above the button
+//        label.center.y -= label.frame.height
+//        
+//        // Add the label to the view
+//        view.addSubview(label)
+//        
+//        // Animate the label to fade in
+//        UIView.animate(withDuration: 0.3, animations: {
+//            label.alpha = 1
+//            label.center.y += label.frame.height
+//        }) { _ in
+//            // After 0.4 seconds, dismiss the label
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+//                UIView.animate(withDuration: 0.3, animations: {
+//                    label.alpha = 0
+//                    label.center.y -= label.frame.height
+//                }, completion: { _ in
+//                    label.removeFromSuperview()
+//                })
+//            }
+//        }
+//    }
+    
+//    @objc private func showPopup(sender: UIButton) {
+//      // Create a UILabel with the same size and position as the button
+//      let label = UILabel(frame: sender.frame)
+//      label.text = sender.currentTitle
+//      label.textAlignment = .center
+//      label.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+//      label.textColor = .white
+//      label.layer.cornerRadius = 10
+//      label.clipsToBounds = true
+//      label.alpha = 0
+//
+//      // Add the label to the view
+//      view.addSubview(label)
+//
+//      // Animate the label fadeIn and fadeOut sequentially
+//      UIView.animate(withDuration: 0.3, animations: {
+//        label.alpha = 1
+//      }) { _ in
+//        UIView.animate(withDuration: 0.3, animations: {
+//          label.alpha = 0
+//        }, completion: { _ in
+//          label.removeFromSuperview()
+//        })
+//      }
+//    }
+    
+    @objc private func showPopup(sender: UIButton) {
+        // Create a UILabel with the desired position
+        let labelWidth: CGFloat = 40 // Adjust the width as needed
+        let labelHeight: CGFloat = 45
+        let buttonFrame = sender.convert(sender.bounds, to: view)
+        let labelX = (buttonFrame.origin.x + buttonFrame.width / 2) - (labelWidth / 2)
+        let labelY = buttonFrame.origin.y - labelHeight // Adjust the vertical offset as needed
+        
+        let label = UILabel(frame: CGRect(x: labelX, y: labelY, width: labelWidth, height: labelHeight))
+        label.text = sender.currentTitle
+        label.textAlignment = .center
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        label.textColor = .white
+        label.layer.cornerRadius = 10
+        label.clipsToBounds = true
+        label.alpha = 0
+        
+        // Add the label to the view
+        view.addSubview(label)
+        
+        // Animate the label to fade in
+        UIView.animate(withDuration: 0.3, animations: {
+            label.alpha = 1
+        }) { _ in
+            // After 0.4 seconds, dismiss the label
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                UIView.animate(withDuration: 0.3, animations: {
+                    label.alpha = 0
+                }, completion: { _ in
+                    label.removeFromSuperview()
+                })
+            }
+        }
+    }
+
+
 }
