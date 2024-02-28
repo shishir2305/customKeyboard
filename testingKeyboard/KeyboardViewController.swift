@@ -6,10 +6,28 @@ class KeyboardViewController: UIInputViewController {
     var nextKeyboardButton: UIButton!
     
     var capsLockButton: UIButton! // Caps lock button
-    var isCapsLockOn: Bool = false // Property to track the current state of caps lock button
     var keyboardButton: UIButton!
     var returnButton: UIButton!
     var settingsButton: UIButton!
+    var leftArrowButton: UIButton!
+    var showFirstKeyboardScreenKey: UIButton!
+    var showSecondKeyboardScreenKey: UIButton!
+    
+    var isCapsLockOn: Bool = false // Property to track the current state of caps lock button
+    
+    var firstScreenKeys = [
+        ["'12$", "f", "g", "h", "Tr", "j", "k", "l", "m", "n","del"],
+        ["caps","e", "i", "o", "T+", "p", "q", "r", "s", "t", ";"],
+        ["a", "b", "c", "d", "u", "v", "w", "x", "y", "z", "n{r"],
+        ["keyboard", "@", "_", "settings", "space", "<", ">", "/", "return"]
+    ]
+    
+    var secondScreenKeys = [
+        ["@Bc","1","2","3","4","5","6","7","8","9","0"],
+        ["~","!","£","#","$","%","^","&","*","=",""],
+        ["`","€","¥","(",")","leftArrow","'","\"","-","+","del"],
+        ["keyboard","ñ{R","settings","space",",",".","/","return"]
+    ]
 
     override func updateViewConstraints() {
         super.updateViewConstraints()
@@ -21,7 +39,7 @@ class KeyboardViewController: UIInputViewController {
 
         // Perform custom UI setup here
         setupNextKeyboardButton()
-        setupKeyboard()
+        setupKeyboard(keyboardLayout:firstScreenKeys)
     }
 
     func setupNextKeyboardButton() {
@@ -64,7 +82,7 @@ class KeyboardViewController: UIInputViewController {
 extension KeyboardViewController {
     
     // function to create a custom button
-    func createKeyButton(title: String) -> UIButton {
+    func createKeyButton() -> UIButton {
         let button = UIButton(type: .system)
         button.layer.cornerRadius = 5
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -94,6 +112,17 @@ extension KeyboardViewController {
     @objc func spaceBarTapped() {
         (textDocumentProxy as UIKeyInput).insertText(" ")
     }
+    
+    // Show first keyboard screen
+    @objc func showFirstKeyboardScreen () {
+        setupKeyboard(keyboardLayout: firstScreenKeys)
+    }
+    
+    // Show second keyboard screen
+    @objc func showSecondKeyboardScreen () {
+        setupKeyboard(keyboardLayout: secondScreenKeys)
+    }
+    
     
     // To perform initial set up of the caps lock button
     func setupCapsLockButton() {
@@ -134,7 +163,9 @@ extension KeyboardViewController {
     
     
     // Create the main keyboard stack view
-    func setupKeyboard() {
+    func setupKeyboard(keyboardLayout:[[String]]) {
+        keyboardStackView.arrangedSubviews.forEach { $0.removeFromSuperview() } // removing already present horizontal stack to render new ones
+        
         keyboardStackView.axis = .vertical
         keyboardStackView.distribution = .fillEqually
         keyboardStackView.alignment = .fill
@@ -152,12 +183,7 @@ extension KeyboardViewController {
         ])
 
         // Define the layout of the keyboard
-        let rows = [
-            ["12$", "f", "g", "h", "Tr", "j", "k", "l", "m", "n","del"],
-            ["caps","e", "i", "o", "T+", "p", "q", "r", "s", "t", ";"],
-            ["a", "b", "c", "d", "u", "v", "w", "x", "y", "z", "n{r"],
-            ["keyboard", "@", "_", "settings", "space", "<", ">", "/", "return"]
-        ]
+        let rows = keyboardLayout
 
         // Create a horizontal stack view for each row of keys
         for row in rows {
@@ -178,15 +204,40 @@ extension KeyboardViewController {
             
             switch key {
                 
+            case "'12$":
+                showFirstKeyboardScreenKey = UIButton(type: .system)
+                showFirstKeyboardScreenKey.setTitle(key, for: .normal)
+                showFirstKeyboardScreenKey.setTitleColor(.black, for: .normal)
+                showFirstKeyboardScreenKey.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+                showFirstKeyboardScreenKey.addTarget(self, action: #selector(showSecondKeyboardScreen), for: .touchUpInside)
+                showFirstKeyboardScreenKey.layer.cornerRadius = 5
+                showFirstKeyboardScreenKey.translatesAutoresizingMaskIntoConstraints = false
+                showFirstKeyboardScreenKey.heightAnchor.constraint(equalToConstant: 45).isActive = true
+                showFirstKeyboardScreenKey.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+                rowStackView.addArrangedSubview(showFirstKeyboardScreenKey)
+                
+            case "@Bc":
+                showSecondKeyboardScreenKey = UIButton(type: .system)
+                showSecondKeyboardScreenKey.setTitle(key, for: .normal)
+                showSecondKeyboardScreenKey.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+                showSecondKeyboardScreenKey.setTitleColor(.black, for: .normal)
+                showSecondKeyboardScreenKey.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+                showSecondKeyboardScreenKey.addTarget(self, action: #selector(showFirstKeyboardScreen), for: .touchUpInside)
+                showSecondKeyboardScreenKey.layer.cornerRadius = 5
+                showSecondKeyboardScreenKey.translatesAutoresizingMaskIntoConstraints = false
+                showSecondKeyboardScreenKey.heightAnchor.constraint(equalToConstant: 45).isActive = true
+                showSecondKeyboardScreenKey.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+                rowStackView.addArrangedSubview(showSecondKeyboardScreenKey)
+                
             case "a" , "e" ,"i" ,"o" ,"u" ,"r", "s", "t":
-                let button = createKeyButton(title: key)
+                let button = createKeyButton()
                 button.setTitle(key, for: .normal)
                 button.setTitleColor(.white, for: .normal)
                 button.backgroundColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1.0)
                 rowStackView.addArrangedSubview(button)
                 
             case "Tr":
-                let button = createKeyButton(title: key)
+                let button = createKeyButton()
                 button.backgroundColor = .green
                 button.setTitle(key, for: .normal)
                 button.setTitleColor(.black, for: .normal)
@@ -195,7 +246,7 @@ extension KeyboardViewController {
                 rowStackView.addArrangedSubview(button)
                 
             case "T+":
-                let button = createKeyButton(title: key)
+                let button = createKeyButton()
                 button.setTitle(key, for: .normal)
                 button.setTitleColor(.black, for: .normal)
                 button.backgroundColor = .systemGreen
@@ -203,7 +254,7 @@ extension KeyboardViewController {
                 rowStackView.addArrangedSubview(button)
                 
             case "del":
-                let button = createKeyButton(title: key)
+                let button = createKeyButton()
                 button.tintColor = .gray
                 button.setTitle(nil, for: .normal)
                 button.setImage(UIImage(systemName: "delete.left.fill"), for: .normal)
@@ -242,12 +293,13 @@ extension KeyboardViewController {
                 rowStackView.addArrangedSubview(returnButton)
                 
             case "space":
-                let button = createKeyButton(title: key)
-                button.tintColor = .gray
+                let button = createKeyButton()
+                button.tintColor = .white
                 button.setTitle(nil, for: .normal)
                 button.setImage(UIImage(systemName: "space"), for: .normal)
-                button.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+                button.backgroundColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1.0)
                 button.addTarget(self, action: #selector(spaceBarTapped), for: .touchUpInside)
+                print("inside")
                 rowStackView.addArrangedSubview(button)
                 
             case "settings":
@@ -258,8 +310,17 @@ extension KeyboardViewController {
                 settingsButton.setImage(UIImage(systemName: "gearshape.fill"), for: .normal)
                 rowStackView.addArrangedSubview(settingsButton)
                 
+            case "leftArrow":
+                leftArrowButton = UIButton(type: .system)
+                leftArrowButton.layer.cornerRadius = 5
+                leftArrowButton.tintColor = .darkGray
+                leftArrowButton.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+                leftArrowButton.setImage(UIImage(systemName: "arrowtriangle.left.fill"), for: .normal)
+                rowStackView.addArrangedSubview(leftArrowButton)
+                
+                
             default:
-                let button = createKeyButton(title: key)
+                let button = createKeyButton()
                 button.setTitle(key, for: .normal)
                 button.setTitleColor(.black, for: .normal)
                 button.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
