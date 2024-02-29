@@ -2,31 +2,33 @@ import UIKit
 
 class KeyboardViewController: UIInputViewController {
     
-    let keyboardStackView = UIStackView()
+    let keyboardStackView = UIStackView() // Creating a Vertical Stack View that will store multiple horizontal stack view within which the keys will be stored
     var nextKeyboardButton: UIButton!
     
     var capsLockButton: UIButton! // Caps lock button
-    var keyboardButton: UIButton!
-    var returnButton: UIButton!
-    var settingsButton: UIButton!
-    var leftArrowButton: UIButton!
-    var showFirstKeyboardScreenKey: UIButton!
-    var showSecondKeyboardScreenKey: UIButton!
+    var keyboardButton: UIButton! // Dismiss keyboard button
+    var returnButton: UIButton! // Enter button
+    var settingsButton: UIButton! // Setting button
+    var leftArrowButton: UIButton! // Left arrow button
+    var showFirstKeyboardScreenKey: UIButton! // Button to toggle first keyboard screen
+    var showSecondKeyboardScreenKey: UIButton! // Button to toggle second keyboard screen
     
     var isCapsLockOn: Bool = false // Property to track the current state of caps lock button
     
+    // Keys for the first screen keyboard
     var firstScreenKeys = [
         ["'12$", "f", "g", "h", "Tr", "j", "k", "l", "m", "n","del"],
         ["caps","e", "i", "o", "T+", "p", "q", "r", "s", "t", ";"],
-        ["a", "b", "c", "d", "u", "v", "w", "x", "y", "z", "n{r"],
+        ["a", "b", "c", "d", "u", "v", "w", "x", "y", "z", "ñ{®"],
         ["keyboard", "@", "_", "settings", "space", "<", ">", "/", "return"]
     ]
     
+    // Keys for the second screen keyboard
     var secondScreenKeys = [
         ["@Bc","1","2","3","4","5","6","7","8","9","0"],
         ["~","!","£","#","$","%","^","&","*","=",""],
         ["`","€","¥","(",")","leftArrow","'","\"","-","+","del"],
-        ["keyboard","ñ{R","settings","space",",",".","/","return"]
+        ["keyboard","ñ{®","settings","space",",",".","/","return"]
     ]
 
     override func updateViewConstraints() {
@@ -202,6 +204,7 @@ extension KeyboardViewController {
 
         for key in keys {
             
+            // Using a switch case based approach to handle different types of keys
             switch key {
                 
             case "'12$":
@@ -210,6 +213,7 @@ extension KeyboardViewController {
                 showFirstKeyboardScreenKey.setTitleColor(.black, for: .normal)
                 showFirstKeyboardScreenKey.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
                 showFirstKeyboardScreenKey.addTarget(self, action: #selector(showSecondKeyboardScreen), for: .touchUpInside)
+                showFirstKeyboardScreenKey.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 showFirstKeyboardScreenKey.layer.cornerRadius = 5
                 showFirstKeyboardScreenKey.translatesAutoresizingMaskIntoConstraints = false
                 showFirstKeyboardScreenKey.heightAnchor.constraint(equalToConstant: 45).isActive = true
@@ -223,6 +227,7 @@ extension KeyboardViewController {
                 showSecondKeyboardScreenKey.setTitleColor(.black, for: .normal)
                 showSecondKeyboardScreenKey.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
                 showSecondKeyboardScreenKey.addTarget(self, action: #selector(showFirstKeyboardScreen), for: .touchUpInside)
+                showSecondKeyboardScreenKey.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 showSecondKeyboardScreenKey.layer.cornerRadius = 5
                 showSecondKeyboardScreenKey.translatesAutoresizingMaskIntoConstraints = false
                 showSecondKeyboardScreenKey.heightAnchor.constraint(equalToConstant: 45).isActive = true
@@ -234,6 +239,7 @@ extension KeyboardViewController {
                 button.setTitle(key, for: .normal)
                 button.setTitleColor(.white, for: .normal)
                 button.backgroundColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1.0)
+                button.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(button)
                 
             case "Tr":
@@ -260,6 +266,7 @@ extension KeyboardViewController {
                 button.setImage(UIImage(systemName: "delete.left.fill"), for: .normal)
                 button.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
                 button.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
+                button.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(button)
                 
             case "caps":
@@ -272,6 +279,7 @@ extension KeyboardViewController {
                 capsLockButton.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
                 capsLockButton.setImage(UIImage(systemName: "capslock"), for: .normal)
                 capsLockButton.addTarget(self, action: #selector(capsLockButtonTapped), for: .touchUpInside)
+                capsLockButton.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(capsLockButton)
                 
             case "keyboard":
@@ -281,6 +289,7 @@ extension KeyboardViewController {
                 keyboardButton.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
                 keyboardButton.setImage(UIImage(systemName: "keyboard.chevron.compact.down.fill"), for: .normal)
                 keyboardButton.addTarget(self, action: #selector(dismissKeyboard), for: .touchUpInside)
+                keyboardButton.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(keyboardButton)
                 
             case "return":
@@ -290,6 +299,7 @@ extension KeyboardViewController {
                 returnButton.backgroundColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1.0)
                 returnButton.setImage(UIImage(systemName: "return"), for: .normal)
                 returnButton.addTarget(self, action: #selector(returnKeyPressed), for: .touchUpInside)
+                returnButton.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(returnButton)
                 
             case "space":
@@ -300,6 +310,7 @@ extension KeyboardViewController {
                 button.backgroundColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1.0)
                 button.addTarget(self, action: #selector(spaceBarTapped), for: .touchUpInside)
                 print("inside")
+                button.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(button)
                 
             case "settings":
@@ -308,6 +319,7 @@ extension KeyboardViewController {
                 settingsButton.tintColor = .darkGray
                 settingsButton.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
                 settingsButton.setImage(UIImage(systemName: "gearshape.fill"), for: .normal)
+                settingsButton.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(settingsButton)
                 
             case "leftArrow":
@@ -335,94 +347,49 @@ extension KeyboardViewController {
     
 }
 
+// animation related functions
 extension KeyboardViewController {
-//    @objc private func showPopup(sender: UIButton) {
-//        // Create a UILabel with the same size as the button
-//        let label = UILabel(frame: sender.frame)
-//        label.text = sender.currentTitle
-//        label.textAlignment = .center
-//        label.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-//        label.textColor = .white
-//        label.layer.cornerRadius = 10
-//        label.clipsToBounds = true
-//        label.alpha = 0
-//        
-//        // Position the label above the button
-//        label.center.y -= label.frame.height
-//        
-//        // Add the label to the view
-//        view.addSubview(label)
-//        
-//        // Animate the label to fade in
-//        UIView.animate(withDuration: 0.3, animations: {
-//            label.alpha = 1
-//            label.center.y += label.frame.height
-//        }) { _ in
-//            // After 0.4 seconds, dismiss the label
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-//                UIView.animate(withDuration: 0.3, animations: {
-//                    label.alpha = 0
-//                    label.center.y -= label.frame.height
-//                }, completion: { _ in
-//                    label.removeFromSuperview()
-//                })
-//            }
-//        }
-//    }
     
-//    @objc private func showPopup(sender: UIButton) {
-//      // Create a UILabel with the same size and position as the button
-//      let label = UILabel(frame: sender.frame)
-//      label.text = sender.currentTitle
-//      label.textAlignment = .center
-//      label.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-//      label.textColor = .white
-//      label.layer.cornerRadius = 10
-//      label.clipsToBounds = true
-//      label.alpha = 0
-//
-//      // Add the label to the view
-//      view.addSubview(label)
-//
-//      // Animate the label fadeIn and fadeOut sequentially
-//      UIView.animate(withDuration: 0.3, animations: {
-//        label.alpha = 1
-//      }) { _ in
-//        UIView.animate(withDuration: 0.3, animations: {
-//          label.alpha = 0
-//        }, completion: { _ in
-//          label.removeFromSuperview()
-//        })
-//      }
-//    }
-    
+    // creating the desired key popup animation for key press
     @objc private func showPopup(sender: UIButton) {
-        // Create a UILabel with the desired position
-        let labelWidth: CGFloat = 40 // Adjust the width as needed
-        let labelHeight: CGFloat = 45
+        let labelHeight: CGFloat = sender.bounds.height
+        let labelWidth: CGFloat = sender.bounds.width
         let buttonFrame = sender.convert(sender.bounds, to: view)
         let labelX = (buttonFrame.origin.x + buttonFrame.width / 2) - (labelWidth / 2)
-        let labelY = buttonFrame.origin.y - labelHeight // Adjust the vertical offset as needed
-        
+        let labelY = buttonFrame.origin.y - 30
         let label = UILabel(frame: CGRect(x: labelX, y: labelY, width: labelWidth, height: labelHeight))
-        label.text = sender.currentTitle
+        
+        // If the button has a title then set the label's text else if it has an icon then create an image view with the same dimension as that of the button and insert the icon in it
+        if let title = sender.currentTitle, !title.isEmpty {
+                label.text = title
+                label.textAlignment = .center
+                label.textColor = sender.titleColor(for: .normal)
+                label.font = UIFont.systemFont(ofSize: 20)
+            } else if let buttonImage = sender.currentImage {
+                let imageView = UIImageView(image: buttonImage)
+                let imageWidth = sender.imageView?.bounds.width ?? labelWidth
+                let imageHeight = sender.imageView?.bounds.height ?? labelHeight
+                imageView.frame = CGRect(x: (labelWidth - imageWidth) / 2, y: (labelHeight - imageHeight) / 2, width: imageWidth, height: imageHeight)
+                imageView.contentMode = .scaleAspectFit
+                imageView.tintColor = sender.tintColor
+                label.addSubview(imageView)
+            }
+        
         label.textAlignment = .center
-        label.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-        label.textColor = .white
-        label.layer.cornerRadius = 10
+        label.backgroundColor = sender.backgroundColor
+        label.textColor = sender.titleColor(for: .normal)
+        label.layer.cornerRadius = 5
         label.clipsToBounds = true
         label.alpha = 0
         
-        // Add the label to the view
         view.addSubview(label)
         
-        // Animate the label to fade in
-        UIView.animate(withDuration: 0.3, animations: {
+        // perform the animation and automatically dismiss it after sometime
+        UIView.animate(withDuration: 0.05, animations: {
             label.alpha = 1
         }) { _ in
-            // After 0.4 seconds, dismiss the label
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                UIView.animate(withDuration: 0.3, animations: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                UIView.animate(withDuration: 0.05, animations: {
                     label.alpha = 0
                 }, completion: { _ in
                     label.removeFromSuperview()
@@ -430,6 +397,4 @@ extension KeyboardViewController {
             }
         }
     }
-
-
 }
