@@ -15,6 +15,9 @@ class KeyboardViewController: UIInputViewController {
     
     var isCapsLockOn: Bool = false // Property to track the current state of caps lock button
     
+    let lightBlackColor: UIColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1.0)
+    let lightGrayColor: UIColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+    
     // Keys for the first screen keyboard
     var firstScreenKeys = [
         ["'12$", "f", "g", "h", "Tr", "j", "k", "l", "m", "n","del"],
@@ -39,7 +42,7 @@ class KeyboardViewController: UIInputViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Perform custom UI setup here
+        // Perform custom keyboad UI setup here
         setupNextKeyboardButton()
         setupKeyboard(keyboardLayout:firstScreenKeys)
     }
@@ -80,7 +83,7 @@ class KeyboardViewController: UIInputViewController {
     }
 }
 
-
+// Entire keyboard layout logic
 extension KeyboardViewController {
     
     // function to create a custom button
@@ -153,7 +156,7 @@ extension KeyboardViewController {
         for case let rowStackView as UIStackView in keyboardStackView.arrangedSubviews {
             for case let button as UIButton in rowStackView.arrangedSubviews {
                 if let title = button.titleLabel?.text {
-                    if (title == "Tr" || title == "T+"){
+                    if (title == "Tr" || title == "T+" || title == "ñ{®"){
                         continue
                     }
                     let newTitle = isCapsLockOn ? title.uppercased() : title.lowercased()
@@ -211,7 +214,7 @@ extension KeyboardViewController {
                 showFirstKeyboardScreenKey = UIButton(type: .system)
                 showFirstKeyboardScreenKey.setTitle(key, for: .normal)
                 showFirstKeyboardScreenKey.setTitleColor(.black, for: .normal)
-                showFirstKeyboardScreenKey.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+                showFirstKeyboardScreenKey.backgroundColor = lightGrayColor
                 showFirstKeyboardScreenKey.addTarget(self, action: #selector(showSecondKeyboardScreen), for: .touchUpInside)
                 showFirstKeyboardScreenKey.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 showFirstKeyboardScreenKey.layer.cornerRadius = 5
@@ -225,7 +228,7 @@ extension KeyboardViewController {
                 showSecondKeyboardScreenKey.setTitle(key, for: .normal)
                 showSecondKeyboardScreenKey.titleLabel?.font = UIFont.systemFont(ofSize: 16)
                 showSecondKeyboardScreenKey.setTitleColor(.black, for: .normal)
-                showSecondKeyboardScreenKey.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+                showSecondKeyboardScreenKey.backgroundColor = lightGrayColor
                 showSecondKeyboardScreenKey.addTarget(self, action: #selector(showFirstKeyboardScreen), for: .touchUpInside)
                 showSecondKeyboardScreenKey.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 showSecondKeyboardScreenKey.layer.cornerRadius = 5
@@ -238,7 +241,7 @@ extension KeyboardViewController {
                 let button = createKeyButton()
                 button.setTitle(key, for: .normal)
                 button.setTitleColor(.white, for: .normal)
-                button.backgroundColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1.0)
+                button.backgroundColor = lightBlackColor
                 button.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(button)
                 
@@ -264,7 +267,7 @@ extension KeyboardViewController {
                 button.tintColor = .gray
                 button.setTitle(nil, for: .normal)
                 button.setImage(UIImage(systemName: "delete.left.fill"), for: .normal)
-                button.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+                button.backgroundColor = lightGrayColor
                 button.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
                 button.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(button)
@@ -276,7 +279,7 @@ extension KeyboardViewController {
                 capsLockButton.heightAnchor.constraint(equalToConstant: 45).isActive = true
                 capsLockButton.titleLabel?.font = UIFont.systemFont(ofSize: 18)
                 capsLockButton.tintColor = .darkGray
-                capsLockButton.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+                capsLockButton.backgroundColor = lightGrayColor
                 capsLockButton.setImage(UIImage(systemName: "capslock"), for: .normal)
                 capsLockButton.addTarget(self, action: #selector(capsLockButtonTapped), for: .touchUpInside)
                 capsLockButton.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
@@ -286,7 +289,7 @@ extension KeyboardViewController {
                 keyboardButton = UIButton(type: .system)
                 keyboardButton.layer.cornerRadius = 5
                 keyboardButton.tintColor = .darkGray
-                keyboardButton.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+                keyboardButton.backgroundColor = lightGrayColor
                 keyboardButton.setImage(UIImage(systemName: "keyboard.chevron.compact.down.fill"), for: .normal)
                 keyboardButton.addTarget(self, action: #selector(dismissKeyboard), for: .touchUpInside)
                 keyboardButton.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
@@ -296,7 +299,7 @@ extension KeyboardViewController {
                 returnButton = UIButton(type: .system)
                 returnButton.layer.cornerRadius = 5
                 returnButton.tintColor = .white
-                returnButton.backgroundColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1.0)
+                returnButton.backgroundColor = lightBlackColor
                 returnButton.setImage(UIImage(systemName: "return"), for: .normal)
                 returnButton.addTarget(self, action: #selector(returnKeyPressed), for: .touchUpInside)
                 returnButton.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
@@ -307,7 +310,7 @@ extension KeyboardViewController {
                 button.tintColor = .white
                 button.setTitle(nil, for: .normal)
                 button.setImage(UIImage(systemName: "space"), for: .normal)
-                button.backgroundColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1.0)
+                button.backgroundColor = lightBlackColor
                 button.addTarget(self, action: #selector(spaceBarTapped), for: .touchUpInside)
                 print("inside")
                 button.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
@@ -317,7 +320,7 @@ extension KeyboardViewController {
                 settingsButton = UIButton(type: .system)
                 settingsButton.layer.cornerRadius = 5
                 settingsButton.tintColor = .darkGray
-                settingsButton.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
+                settingsButton.backgroundColor = lightGrayColor
                 settingsButton.setImage(UIImage(systemName: "gearshape.fill"), for: .normal)
                 settingsButton.addTarget(self, action: #selector(showPopup(sender:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(settingsButton)
